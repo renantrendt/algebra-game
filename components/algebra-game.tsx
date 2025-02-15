@@ -453,22 +453,20 @@ export default function AlgebraGame() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 p-4">
       <Dialog open={showNameModal} onOpenChange={setShowNameModal}>
-        <DialogContent>
+        <DialogContent onPointerDownOutside={e => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Welcome to the Algebra Game!</DialogTitle>
             <DialogDescription>Please enter your name to start playing.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleNameSubmit}>
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="name" className="text-right">
-                  Name
-                </Label>
+              <div className="grid gap-4">
                 <Input
                   id="name"
                   value={playerName}
                   onChange={(e) => setPlayerName(e.target.value)}
-                  className="col-span-3"
+                  placeholder="Name"
+                  className="w-full"
                 />
               </div>
             </div>
