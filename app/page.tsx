@@ -1,7 +1,13 @@
-"use client"
+import dynamic from 'next/dynamic'
 
-import AlgebraGame from "@/components/algebra-game"
+const AlgebraGame = dynamic(() => import('@/components/algebra-game'), {
+  ssr: false,
+})
 
 export default function Home() {
-  return <AlgebraGame />
+  return (
+    <main className="min-h-screen">
+      <AlgebraGame />
+    </main>
+  )
 }
