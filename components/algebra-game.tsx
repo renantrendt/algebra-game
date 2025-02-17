@@ -248,11 +248,32 @@ export default function AlgebraGame() {
     init()
   }, [])
 
+  // Função para carregar o nome salvo do localStorage
+  const loadSavedName = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const savedName = localStorage.getItem('playerName')
+      return savedName || ''
+    }
+    return ''
+  }, [])
+
+  // Função para salvar o nome no localStorage
+  const savePlayerName = useCallback((name: string) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('playerName', name)
+    }
+  }, [])
+
   useEffect(() => {
     if (isDbInitialized) {
-      // SEMPRE mostra o modal e reseta o jogo
-      setShowNameModal(true)
-      setPlayerName('')
+      const savedName = loadSavedName()
+      if (savedName) {
+        setPlayerName(savedName)
+        setShowNameModal(false)
+        loadCurrentPlayer()
+      } else {
+        setShowNameModal(true)
+      }
       setScore(0)
       setSolvedWords([])
       setCurrentWordIndex(0)
@@ -261,7 +282,7 @@ export default function AlgebraGame() {
       loadRanking()
       setIsInitialized(true)
     }
-  }, [isDbInitialized, loadRanking])
+  }, [isDbInitialized, loadRanking, loadSavedName, loadCurrentPlayer])
 
   useEffect(() => {
     if (isInitialized && !showNameModal) {
@@ -293,6 +314,7 @@ export default function AlgebraGame() {
     const cleanName = playerName.trim()
     if (cleanName) {
       setPlayerName(cleanName) // Atualiza o nome limpo
+      savePlayerName(cleanName) // Salva o nome no localStorage
       setShowNameModal(false)
       
       // Carrega os dados do jogador quando o nome é definido
