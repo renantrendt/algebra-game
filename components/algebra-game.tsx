@@ -480,7 +480,7 @@ export default function AlgebraGame() {
       {/* Player and Top Players Container */}
       <div className="flex flex-row gap-4 mb-4">
         {/* Player Information Card */}
-        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 space-y-2">
+        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 space-y-2 h-auto min-h-[150px]">
           <div>
             <h2 className="text-sm sm:text-base font-semibold mb-1">Player: {playerName}</h2>
             <p className="text-xs sm:text-sm">Score: {score}</p>
@@ -509,12 +509,12 @@ export default function AlgebraGame() {
         </div>
 
         {/* Top Players Card */}
-        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1">
+        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 h-auto min-h-[150px]">
           <h3 className="text-sm sm:text-base font-semibold mb-2 text-center">Top Players</h3>
           {isRankingLoading ? (
             <p className="text-xs sm:text-sm text-center">Loading...</p>
           ) : ranking.length > 0 ? (
-            <div className="space-y-1 sm:space-y-2">
+            <div className="space-y-1 sm:space-y-2 h-full">
               {ranking.map((player, index) => (
                 <div
                   key={index}
@@ -543,7 +543,7 @@ export default function AlgebraGame() {
       </div>
 
       {/* Equation and Answer Section */}
-      <div className="bg-white rounded-lg shadow-lg p-4 mb-4">
+      <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-auto min-h-[200px]">
         {equation && !showCompletedWord && (
           <div className="text-base sm:text-2xl mb-2 sm:mb-4 text-center">
             {equation.left} = {equation.right}
@@ -551,7 +551,7 @@ export default function AlgebraGame() {
         )}
 
         {!showCompletedWord && equation && (
-          <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          <form onSubmit={handleSubmit} className="flex items-center gap-2 mb-2">
             <Input
               type="number"
               value={playerAnswer}
@@ -577,14 +577,8 @@ export default function AlgebraGame() {
         </div>
       </div>
 
-      {/* Solved Words Section */}
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 text-center">
-        <h3 className="text-sm sm:text-base font-semibold mb-2">Solved Words</h3>
-        <p className="text-xs sm:text-sm">{solvedWords.length > 0 ? solvedWords.join(", ") : "No words solved yet"}</p>
-      </div>
-
       {/* Alphabet Section */}
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4">
+      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 h-auto min-h-[150px]">
         <h3 className="text-sm sm:text-base font-semibold mb-2 text-center">Alphabet</h3>
         <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
           {ALPHABET.split("").map((letter, index) => (
@@ -601,6 +595,12 @@ export default function AlgebraGame() {
           ))}
         </div>
       </div>
+            {/* Solved Words Section */}
+            <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 text-center h-auto min-h-[100px]">
+        <h3 className="text-sm sm:text-base font-semibold mb-2">Solved Words</h3>
+        <p className="text-xs sm:text-sm">{solvedWords.length > 0 ? solvedWords.join(", ") : "No words solved yet"}</p>
+      </div>
+
 
       {/* Full Ranking Modal */}
       <Dialog open={showFullRanking} onOpenChange={setShowFullRanking}>
