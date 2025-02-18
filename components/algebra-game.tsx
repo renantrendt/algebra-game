@@ -477,32 +477,68 @@ export default function AlgebraGame() {
       {/* Título Principal */}
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 text-blue-800 text-center">Algebra Game</h1>
 
-      {/* Player Information Card */}
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 space-y-2">
-        <div>
-          <h2 className="text-sm sm:text-base font-semibold mb-1">Player: {playerName}</h2>
-          <p className="text-xs sm:text-sm">Score: {score}</p>
-          <p className="text-xs sm:text-sm">Rank: {playerRank > 0 ? `#${playerRank}` : "Not ranked"}</p>
+      {/* Player and Top Players Container */}
+      <div className="flex flex-row gap-4 mb-4">
+        {/* Player Information Card */}
+        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 space-y-2">
+          <div>
+            <h2 className="text-sm sm:text-base font-semibold mb-1">Player: {playerName}</h2>
+            <p className="text-xs sm:text-sm">Score: {score}</p>
+            <p className="text-xs sm:text-sm">Rank: {playerRank > 0 ? `#${playerRank}` : "Not ranked"}</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-2">
+            <div
+              className={`px-2 sm:px-4 py-1 sm:py-2 rounded border text-xs sm:text-sm text-center flex-1 cursor-pointer ${difficulty === "Easy" ? "bg-white border-blue-500" : "bg-gray-100 border-gray-300"}`}
+              onClick={() => handleDifficultyChange("Easy")}
+            >
+              Easy
+            </div>
+            <div
+              className={`px-2 sm:px-4 py-1 sm:py-2 rounded border text-xs sm:text-sm text-center flex-1 ${
+                !isMediumUnlocked
+                  ? "bg-gray-300 cursor-not-allowed opacity-50"
+                  : difficulty === "Medium"
+                    ? "bg-white border-blue-500"
+                    : "bg-gray-100 border-gray-300 cursor-pointer"
+              }`}
+              onClick={() => handleDifficultyChange("Medium")}
+            >
+              Medium
+            </div>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-2">
-          <div
-            className={`px-2 sm:px-4 py-1 sm:py-2 rounded border text-xs sm:text-sm text-center flex-1 cursor-pointer ${difficulty === "Easy" ? "bg-white border-blue-500" : "bg-gray-100 border-gray-300"}`}
-            onClick={() => handleDifficultyChange("Easy")}
-          >
-            Easy
-          </div>
-          <div
-            className={`px-2 sm:px-4 py-1 sm:py-2 rounded border text-xs sm:text-sm text-center flex-1 ${
-              !isMediumUnlocked
-                ? "bg-gray-300 cursor-not-allowed opacity-50"
-                : difficulty === "Medium"
-                  ? "bg-white border-blue-500"
-                  : "bg-gray-100 border-gray-300 cursor-pointer"
-            }`}
-            onClick={() => handleDifficultyChange("Medium")}
-          >
-            Medium
-          </div>
+
+        {/* Top Players Card */}
+        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1">
+          <h3 className="text-sm sm:text-base font-semibold mb-2 text-center">Top Players</h3>
+          {isRankingLoading ? (
+            <p className="text-xs sm:text-sm text-center">Loading...</p>
+          ) : ranking.length > 0 ? (
+            <div className="space-y-1 sm:space-y-2">
+              {ranking.map((player, index) => (
+                <div
+                  key={index}
+                  className={`flex justify-between items-center p-1 sm:p-2 rounded text-xs sm:text-sm ${index === 0 ? 'bg-yellow-100' : index === 1 ? 'bg-gray-100' : 'bg-yellow-50'}`}
+                >
+                  <div className="flex items-center">
+                    <span className="font-bold mr-1 sm:mr-2">#{index + 1}</span>
+                    <span className="truncate max-w-[80px]">{player.name}</span>
+                  </div>
+                  <span className="font-bold">{player.score}</span>
+                </div>
+              ))}
+              {fullRanking.length > 3 && (
+                <button
+                  onClick={() => setShowFullRanking(true)}
+                  className="w-full mt-1 sm:mt-2 py-1 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors text-center rounded border border-gray-200 hover:bg-gray-50"
+                >
+                  Ver mais...
+                </button>
+              )}
+            </div>
+          ) : (
+            <p className="text-xs sm:text-sm text-center">No rankings available</p>
+          )}
         </div>
       </div>
 
@@ -515,7 +551,7 @@ export default function AlgebraGame() {
         )}
 
         {!showCompletedWord && equation && (
-          <form onSubmit={handleSubmit} className="mb-2 sm:mb-4 flex flex-col sm:flex-row gap-2">
+          <form onSubmit={handleSubmit} className="flex items-center gap-2">
             <Input
               type="number"
               value={playerAnswer}
@@ -523,7 +559,7 @@ export default function AlgebraGame() {
               placeholder="Enter the value of x"
               className="flex-grow text-sm sm:text-base"
             />
-            <Button type="submit" className="w-full sm:w-auto text-sm sm:text-base">Submit</Button>
+            <Button type="submit" className="text-sm sm:text-base">Submit</Button>
           </form>
         )}
 
@@ -564,39 +600,6 @@ export default function AlgebraGame() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Top Players Card */}
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4">
-        <h3 className="text-sm sm:text-base font-semibold mb-2 text-center">Top Players</h3>
-        {isRankingLoading ? (
-          <p className="text-xs sm:text-sm text-center">Loading...</p>
-        ) : ranking.length > 0 ? (
-          <div className="space-y-1 sm:space-y-2">
-            {ranking.map((player, index) => (
-              <div
-                key={index}
-                className={`flex justify-between items-center p-1 sm:p-2 rounded text-xs sm:text-sm ${index === 0 ? 'bg-yellow-100' : index === 1 ? 'bg-gray-100' : 'bg-yellow-50'}`}
-              >
-                <div className="flex items-center">
-                  <span className="font-bold mr-1 sm:mr-2">#{index + 1}</span>
-                  <span className="truncate max-w-[80px]">{player.name}</span>
-                </div>
-                <span className="font-bold">{player.score}</span>
-              </div>
-            ))}
-            {fullRanking.length > 3 && (
-              <button
-                onClick={() => setShowFullRanking(true)}
-                className="w-full mt-1 sm:mt-2 py-1 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors text-center rounded border border-gray-200 hover:bg-gray-50"
-              >
-                Ver mais...
-              </button>
-            )}
-          </div>
-        ) : (
-          <p className="text-xs sm:text-sm text-center">No rankings available</p>
-        )}
       </div>
 
       {/* Full Ranking Modal */}
