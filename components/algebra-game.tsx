@@ -474,164 +474,197 @@ export default function AlgebraGame() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 p-4 pb-20">
-      {/* Título Principal */}
-      <h1 className="text-2xl text-blue-800 text-center font-bold mb-4">Algebra Game</h1>
-
-      {/* Player and Top Players Container */}
-      <div className="flex flex-row gap-4 mb-4">
-        {/* Player Information Card */}
-        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 space-y-2 h-auto min-h-[150px]">
-          <div>
-            <h2 className="text-sm font-semibold mb-1">Player: {playerName}</h2>
-            <p className="text-xs">Score: {score}</p>
-            <p className="text-xs">Rank: {playerRank > 0 ? `#${playerRank}` : "Not ranked"}</p>
-          </div>
-          <div className="flex flex-wrap justify-center gap-2">
-            <div
-              className={`px-2 py-1 rounded border text-xs text-center flex-1 cursor-pointer ${difficulty === "Easy" ? "bg-white border-blue-500" : "bg-gray-100 border-gray-300"}`}
-              onClick={() => handleDifficultyChange("Easy")}
-            >
-              Easy
-            </div>
-            <div
-              className={`px-2 py-1 rounded border text-xs text-center flex-1 ${
-                !isMediumUnlocked
-                  ? "bg-gray-300 cursor-not-allowed opacity-50"
-                  : difficulty === "Medium"
-                    ? "bg-white border-blue-500"
-                    : "bg-gray-100 border-gray-300 cursor-pointer"
-              }`}
-              onClick={() => handleDifficultyChange("Medium")}
-            >
-              Medium
-            </div>
-          </div>
-        </div>
-
-        {/* Top Players Card */}
-        <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 h-auto min-h-[150px]">
-          <h3 className="text-sm font-semibold mb-2 text-center">Top Players</h3>
-          {isRankingLoading ? (
-            <p className="text-xs text-center">Loading...</p>
-          ) : ranking.length > 0 ? (
-            <div className="space-y-1 h-full">
-              {ranking.map((player, index) => (
-                <div
-                  key={index}
-                  className={`flex justify-between items-center p-1 rounded text-xs ${index === 0 ? 'bg-yellow-100' : index === 1 ? 'bg-gray-100' : 'bg-yellow-50'}`}
-                >
-                  <div className="flex items-center">
-                    <span className="font-bold mr-1">#{index + 1}</span>
-                    <span className="truncate max-w-[80px]">{player.name}</span>
-                  </div>
-                  <span className="font-bold">{player.score}</span>
-                </div>
-              ))}
-              {fullRanking.length > 3 && (
-                <button
-                  onClick={() => setShowFullRanking(true)}
-                  className="w-full mt-1 py-1 text-xs text-gray-600 hover:text-gray-800 transition-colors text-center rounded border border-gray-200 hover:bg-gray-50"
-                >
-                  Ver mais...
-                </button>
-              )}
-            </div>
-          ) : (
-            <p className="text-xs text-center">No rankings available</p>
-          )}
-        </div>
-      </div>
-
-      {/* Equation and Answer Section */}
-      <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-auto min-h-[200px]">
-        {equation && !showCompletedWord && (
-          <div className="text-base mb-2 text-center">
-            {equation.left} = {equation.right}
-          </div>
-        )}
-
-        {!showCompletedWord && equation && (
-          <form onSubmit={handleSubmit} className="flex items-center gap-2 mb-2">
-            <Input
-              type="number"
-              value={playerAnswer}
-              onChange={(e) => setPlayerAnswer(e.target.value)}
-              placeholder="Enter the value of x"
-              className="flex-grow text-xs"
-            />
-            <Button type="submit" className="text-xs">Submit</Button>
-          </form>
-        )}
-
-        <div className="text-xs mb-2 text-center">{feedback}</div>
-
-        {equation && (
-          <div className="text-base font-mono text-center tracking-[0.5rem] mt-4">
-            {secretPhrase.split("").map((char, index) => (
-              <span
-                key={index}
-                className={`inline-block text-xs ${revealedLetters.has(char) || showCompletedWord ? "text-green-600 font-bold" : ""}`}
-              >
-                {revealedLetters.has(char) || showCompletedWord ? char : "_"}
-              </span>
-            ))}
-          </div>
-        )}
-
-        {!equation && (
-          <div className="text-xs text-center text-gray-500">
-            No equation available. Start a new game!
-          </div>
-        )}
-      </div>
-
-      {/* Alphabet Section */}
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 h-auto min-h-[150px]">
-        <h3 className="text-sm font-semibold mb-2 text-center">Alphabet</h3>
-        <div className="flex flex-wrap justify-center gap-1">
-          {ALPHABET.split("").map((letter, index) => (
-            <div key={letter} className="flex flex-col items-center">
-              <div className="text-[0.5rem] mb-0.5">{index + 1}</div>
-              <div
-                className={`w-5 h-5 flex items-center justify-center border text-xs ${
-                  revealedLetters.has(letter) ? "bg-green-500 text-white" : "bg-gray-200"
-                }`}
-              >
-                {letter}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Solved Words Section */}
-      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 text-center h-auto min-h-[100px]">
-        <h3 className="text-sm font-semibold mb-2">Solved Words</h3>
-        <p className="text-xs">{solvedWords.length > 0 ? solvedWords.join(", ") : "No words solved yet"}</p>
-      </div>
-
-      {/* Full Ranking Modal */}
-      <Dialog open={showFullRanking} onOpenChange={setShowFullRanking}>
+      {/* Modal para inserir nome do jogador */}
+      <Dialog open={showNameModal} onOpenChange={setShowNameModal}>
         <DialogContent className="w-[90%] max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-base">Full Ranking</DialogTitle>
+            <DialogTitle className="text-base">Welcome to the Algebra Game!</DialogTitle>
             <DialogDescription className="text-xs">
-              Top players from 4th to 12th place
+              Please enter your name to start playing.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-1 max-h-[300px] overflow-y-auto">
-            {fullRanking.slice(3).map((player, index) => (
-              <div
-                key={player.id || index}
-                className="flex justify-between items-center p-1 bg-gray-100 rounded text-xs"
-              >
-                <span>#{index + 4} {player.name}</span>
-                <span>{player.score}</span>
-              </div>
-            ))}
-          </div>
+          <form onSubmit={handleNameSubmit} className="space-y-4">
+            <div>
+              <Label htmlFor="name" className="text-xs">Name</Label>
+              <Input
+                id="name"
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                placeholder="Enter your name"
+                className="mt-1 text-xs"
+                required
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit" className="text-xs">Start Game</Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
+
+      {/* Resto do componente só aparece quando o nome não está sendo solicitado */}
+      {!showNameModal && (
+        <>
+          {/* Título Principal */}
+          <h1 className="text-2xl text-blue-800 text-center font-bold mb-4">Algebra Game</h1>
+
+          {/* Player and Top Players Container */}
+          <div className="flex flex-row gap-4 mb-4">
+            {/* Player Information Card */}
+            <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 space-y-2 h-auto min-h-[150px]">
+              <div>
+                <h2 className="text-sm font-semibold mb-1">Player: {playerName}</h2>
+                <p className="text-xs">Score: {score}</p>
+                <p className="text-xs">Rank: {playerRank > 0 ? `#${playerRank}` : "Not ranked"}</p>
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                <div
+                  className={`px-2 py-1 rounded border text-xs text-center flex-1 cursor-pointer ${difficulty === "Easy" ? "bg-white border-blue-500" : "bg-gray-100 border-gray-300"}`}
+                  onClick={() => handleDifficultyChange("Easy")}
+                >
+                  Easy
+                </div>
+                <div
+                  className={`px-2 py-1 rounded border text-xs text-center flex-1 ${
+                    !isMediumUnlocked
+                      ? "bg-gray-300 cursor-not-allowed opacity-50"
+                      : difficulty === "Medium"
+                        ? "bg-white border-blue-500"
+                        : "bg-gray-100 border-gray-300 cursor-pointer"
+                  }`}
+                  onClick={() => handleDifficultyChange("Medium")}
+                >
+                  Medium
+                </div>
+              </div>
+            </div>
+
+            {/* Top Players Card */}
+            <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg flex-1 h-auto min-h-[150px]">
+              <h3 className="text-sm font-semibold mb-2 text-center">Top Players</h3>
+              {isRankingLoading ? (
+                <p className="text-xs text-center">Loading...</p>
+              ) : ranking.length > 0 ? (
+                <div className="space-y-1 h-full">
+                  {ranking.map((player, index) => (
+                    <div
+                      key={index}
+                      className={`flex justify-between items-center p-1 rounded text-xs ${index === 0 ? 'bg-yellow-100' : index === 1 ? 'bg-gray-100' : 'bg-yellow-50'}`}
+                    >
+                      <div className="flex items-center">
+                        <span className="font-bold mr-1">#{index + 1}</span>
+                        <span className="truncate max-w-[80px]">{player.name}</span>
+                      </div>
+                      <span className="font-bold">{player.score}</span>
+                    </div>
+                  ))}
+                  {fullRanking.length > 3 && (
+                    <button
+                      onClick={() => setShowFullRanking(true)}
+                      className="w-full mt-1 py-1 text-xs text-gray-600 hover:text-gray-800 transition-colors text-center rounded border border-gray-200 hover:bg-gray-50"
+                    >
+                      Ver mais...
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-center">No rankings available</p>
+              )}
+            </div>
+          </div>
+
+          {/* Equation and Answer Section */}
+          <div className="bg-white rounded-lg shadow-lg p-4 mb-4 h-auto min-h-[200px]">
+            {equation && !showCompletedWord && (
+              <div className="text-base mb-2 text-center">
+                {equation.left} = {equation.right}
+              </div>
+            )}
+
+            {!showCompletedWord && equation && (
+              <form onSubmit={handleSubmit} className="flex items-center gap-2 mb-2">
+                <Input
+                  type="number"
+                  value={playerAnswer}
+                  onChange={(e) => setPlayerAnswer(e.target.value)}
+                  placeholder="Enter the value of x"
+                  className="flex-grow text-xs"
+                />
+                <Button type="submit" className="text-xs">Submit</Button>
+              </form>
+            )}
+
+            <div className="text-xs mb-2 text-center">{feedback}</div>
+
+            {equation && (
+              <div className="text-base font-mono text-center tracking-[0.5rem] mt-4">
+                {secretPhrase.split("").map((char, index) => (
+                  <span
+                    key={index}
+                    className={`inline-block text-xs ${revealedLetters.has(char) || showCompletedWord ? "text-green-600 font-bold" : ""}`}
+                  >
+                    {revealedLetters.has(char) || showCompletedWord ? char : "_"}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {!equation && (
+              <div className="text-xs text-center text-gray-500">
+                No equation available. Start a new game!
+              </div>
+            )}
+          </div>
+
+          {/* Alphabet Section */}
+          <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 h-auto min-h-[150px]">
+            <h3 className="text-sm font-semibold mb-2 text-center">Alphabet</h3>
+            <div className="flex flex-wrap justify-center gap-1">
+              {ALPHABET.split("").map((letter, index) => (
+                <div key={letter} className="flex flex-col items-center">
+                  <div className="text-[0.5rem] mb-0.5">{index + 1}</div>
+                  <div
+                    className={`w-5 h-5 flex items-center justify-center border text-xs ${
+                      revealedLetters.has(letter) ? "bg-green-500 text-white" : "bg-gray-200"
+                    }`}
+                  >
+                    {letter}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Solved Words Section */}
+          <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 text-center h-auto min-h-[100px]">
+            <h3 className="text-sm font-semibold mb-2">Solved Words</h3>
+            <p className="text-xs">{solvedWords.length > 0 ? solvedWords.join(", ") : "No words solved yet"}</p>
+          </div>
+
+          {/* Full Ranking Modal */}
+          <Dialog open={showFullRanking} onOpenChange={setShowFullRanking}>
+            <DialogContent className="w-[90%] max-w-md">
+              <DialogHeader>
+                <DialogTitle className="text-base">Full Ranking</DialogTitle>
+                <DialogDescription className="text-xs">
+                  Top players from 4th to 12th place
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-1 max-h-[300px] overflow-y-auto">
+                {fullRanking.slice(3).map((player, index) => (
+                  <div
+                    key={player.id || index}
+                    className="flex justify-between items-center p-1 bg-gray-100 rounded text-xs"
+                  >
+                    <span>#{index + 4} {player.name}</span>
+                    <span>{player.score}</span>
+                  </div>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
+        </>
+      )}
     </div>
   );
 }
