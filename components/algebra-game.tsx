@@ -565,16 +565,24 @@ export default function AlgebraGame() {
 
         <div className="text-xs mb-2 text-center">{feedback}</div>
 
-        <div className="text-base font-mono text-center tracking-[0.5rem] mt-4">
-          {secretPhrase.split("").map((char, index) => (
-            <span
-              key={index}
-              className={`inline-block text-xs ${revealedLetters.has(char) || showCompletedWord ? "text-green-600 font-bold" : ""}`}
-            >
-              {revealedLetters.has(char) || showCompletedWord ? char : "_"}
-            </span>
-          ))}
-        </div>
+        {equation && (
+          <div className="text-base font-mono text-center tracking-[0.5rem] mt-4">
+            {secretPhrase.split("").map((char, index) => (
+              <span
+                key={index}
+                className={`inline-block text-xs ${revealedLetters.has(char) || showCompletedWord ? "text-green-600 font-bold" : ""}`}
+              >
+                {revealedLetters.has(char) || showCompletedWord ? char : "_"}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {!equation && (
+          <div className="text-xs text-center text-gray-500">
+            No equation available. Start a new game!
+          </div>
+        )}
       </div>
 
       {/* Alphabet Section */}
