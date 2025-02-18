@@ -473,92 +473,32 @@ export default function AlgebraGame() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 p-4">
-      <Dialog open={showNameModal} onOpenChange={setShowNameModal}>
-        <DialogContent onPointerDownOutside={e => e.preventDefault()}>
-          <DialogHeader>
-            <DialogTitle>Welcome to the Algebra Game!</DialogTitle>
-            <DialogDescription>Please enter your name to start playing.</DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleNameSubmit}>
-            <div className="grid gap-4 py-4">
-              <div className="grid gap-4">
-                <Input
-                  id="name"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  placeholder="Name"
-                  className="w-full"
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button type="submit">Start Game</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+    <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-blue-200 p-4 pb-20">
+      {/* Título Principal */}
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6 md:mb-8 text-blue-800 text-center">Algebra Game</h1>
 
-      <h1 className="text-4xl font-bold mb-8 text-blue-800">Algebra Game</h1>
-
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 mb-8">
-        {equation && !showCompletedWord && (
-          <div className="text-2xl mb-4 text-center">
-            {equation.left} = {equation.right}
-          </div>
-        )}
-
-        {!showCompletedWord && equation && (
-          <form onSubmit={handleSubmit} className="mb-4 flex">
-            <Input
-              type="number"
-              value={playerAnswer}
-              onChange={(e) => setPlayerAnswer(e.target.value)}
-              placeholder="Enter the value of x"
-              className="mr-2 flex-grow"
-            />
-            <Button type="submit">Submit</Button>
-          </form>
-        )}
-
-        <div className="text-xl mb-4 text-center">{feedback}</div>
-
-        <div className="text-4xl font-mono text-center tracking-[1rem] mt-8">
-          {secretPhrase.split("").map((char, index) => (
-            <span
-              key={index}
-              className={`inline-block ${revealedLetters.has(char) || showCompletedWord ? "text-green-600 font-bold" : ""}`}
-            >
-              {revealedLetters.has(char) || showCompletedWord ? char : "_"}
-            </span>
-          ))}
+      {/* Player Information Card */}
+      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 space-y-2">
+        <div>
+          <h2 className="text-sm sm:text-base font-semibold mb-1">Player: {playerName}</h2>
+          <p className="text-xs sm:text-sm">Score: {score}</p>
+          <p className="text-xs sm:text-sm">Rank: {playerRank > 0 ? `#${playerRank}` : "Not ranked"}</p>
         </div>
-      </div>
-
-      <div className="mt-4 text-lg">Solved words: {solvedWords.join(", ")}</div>
-
-      <div className="fixed top-4 left-4 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-2">Player: {playerName}</h2>
-        <p>Score: {score}</p>
-        <p>Rank: {playerRank > 0 ? `#${playerRank}` : "Not ranked"}</p>
-      </div>
-
-      <div className="fixed bottom-4 left-4 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <div
-            className={`px-4 py-2 rounded border ${difficulty === "Easy" ? "bg-white" : "bg-gray-100"} cursor-pointer`}
+            className={`px-2 sm:px-4 py-1 sm:py-2 rounded border text-xs sm:text-sm text-center flex-1 cursor-pointer ${difficulty === "Easy" ? "bg-white border-blue-500" : "bg-gray-100 border-gray-300"}`}
             onClick={() => handleDifficultyChange("Easy")}
           >
             Easy
           </div>
           <div
-            className={`px-4 py-2 rounded border ${
+            className={`px-2 sm:px-4 py-1 sm:py-2 rounded border text-xs sm:text-sm text-center flex-1 ${
               !isMediumUnlocked
-                ? "bg-gray-300 cursor-not-allowed"
+                ? "bg-gray-300 cursor-not-allowed opacity-50"
                 : difficulty === "Medium"
-                  ? "bg-white"
-                  : "bg-gray-100"
-            } cursor-pointer`}
+                  ? "bg-white border-blue-500"
+                  : "bg-gray-100 border-gray-300 cursor-pointer"
+            }`}
             onClick={() => handleDifficultyChange("Medium")}
           >
             Medium
@@ -566,69 +506,56 @@ export default function AlgebraGame() {
         </div>
       </div>
 
-      {/* Top Players Card */}
-      <div className="fixed top-4 right-4 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg min-w-[200px]">
-        <h3 className="text-lg font-semibold mb-2">Top Players</h3>
-        {isRankingLoading ? (
-          <p className="text-center">Loading...</p>
-        ) : ranking.length > 0 ? (
-          <div className="space-y-2">
-            {ranking.map((player, index) => (
-              <div
-                key={index}
-                className={`flex justify-between items-center p-2 rounded ${index === 0 ? 'bg-yellow-100' : index === 1 ? 'bg-gray-100' : 'bg-yellow-50'}`}
-              >
-                <div className="flex items-center">
-                  <span className="font-bold mr-2">#{index + 1}</span>
-                  <span>{player.name}</span>
-                </div>
-                <span className="font-bold">{player.score}</span>
-              </div>
-            ))}
-            {fullRanking.length > 3 && (
-              <button
-                onClick={() => setShowFullRanking(true)}
-                className="w-full mt-2 py-1 text-gray-600 hover:text-gray-800 transition-colors text-center rounded border border-gray-200 hover:bg-gray-50"
-              >
-                Ver mais...
-              </button>
-            )}
+      {/* Equation and Answer Section */}
+      <div className="bg-white rounded-lg shadow-lg p-4 mb-4">
+        {equation && !showCompletedWord && (
+          <div className="text-base sm:text-2xl mb-2 sm:mb-4 text-center">
+            {equation.left} = {equation.right}
           </div>
-        ) : (
-          <p className="text-center">No rankings available</p>
         )}
+
+        {!showCompletedWord && equation && (
+          <form onSubmit={handleSubmit} className="mb-2 sm:mb-4 flex flex-col sm:flex-row gap-2">
+            <Input
+              type="number"
+              value={playerAnswer}
+              onChange={(e) => setPlayerAnswer(e.target.value)}
+              placeholder="Enter the value of x"
+              className="flex-grow text-sm sm:text-base"
+            />
+            <Button type="submit" className="w-full sm:w-auto text-sm sm:text-base">Submit</Button>
+          </form>
+        )}
+
+        <div className="text-sm sm:text-xl mb-2 sm:mb-4 text-center">{feedback}</div>
+
+        <div className="text-2xl sm:text-4xl font-mono text-center tracking-[0.5rem] sm:tracking-[1rem] mt-4 sm:mt-8">
+          {secretPhrase.split("").map((char, index) => (
+            <span
+              key={index}
+              className={`inline-block text-sm sm:text-4xl ${revealedLetters.has(char) || showCompletedWord ? "text-green-600 font-bold" : ""}`}
+            >
+              {revealedLetters.has(char) || showCompletedWord ? char : "_"}
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Full Ranking Modal */}
-      <Dialog open={showFullRanking} onOpenChange={setShowFullRanking}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Full Ranking</DialogTitle>
-            <DialogDescription>
-              Top players from 4th to 12th place
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-2 max-h-[400px] overflow-y-auto">
-            {fullRanking.slice(3).map((player, index) => (
-              <div
-                key={player.id || index}
-                className="flex justify-between items-center p-2 bg-gray-100 rounded">
-                <span>#{index + 4} {player.name}</span>
-                <span>{player.score}</span>
-              </div>
-            ))}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Solved Words Section */}
+      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4 text-center">
+        <h3 className="text-sm sm:text-base font-semibold mb-2">Solved Words</h3>
+        <p className="text-xs sm:text-sm">{solvedWords.length > 0 ? solvedWords.join(", ") : "No words solved yet"}</p>
+      </div>
 
-      <div className="fixed bottom-4 right-4 bg-white bg-opacity-90 p-4 rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold mb-2">Alphabet</h2>
-        <div className="grid grid-cols-4 gap-2">
+      {/* Alphabet Section */}
+      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4">
+        <h3 className="text-sm sm:text-base font-semibold mb-2 text-center">Alphabet</h3>
+        <div className="flex flex-wrap justify-center gap-1 sm:gap-2">
           {ALPHABET.split("").map((letter, index) => (
             <div key={letter} className="flex flex-col items-center">
-              <div className="text-xs mb-1">{index + 1}</div>
+              <div className="text-[0.5rem] sm:text-xs mb-0.5 sm:mb-1">{index + 1}</div>
               <div
-                className={`w-8 h-8 flex items-center justify-center border ${
+                className={`w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center border text-xs sm:text-sm ${
                   revealedLetters.has(letter) ? "bg-green-500 text-white" : "bg-gray-200"
                 }`}
               >
@@ -638,7 +565,62 @@ export default function AlgebraGame() {
           ))}
         </div>
       </div>
-    </div>
-  )
-}
 
+      {/* Top Players Card */}
+      <div className="bg-white bg-opacity-90 p-4 rounded-lg shadow-lg mb-4">
+        <h3 className="text-sm sm:text-base font-semibold mb-2 text-center">Top Players</h3>
+        {isRankingLoading ? (
+          <p className="text-xs sm:text-sm text-center">Loading...</p>
+        ) : ranking.length > 0 ? (
+          <div className="space-y-1 sm:space-y-2">
+            {ranking.map((player, index) => (
+              <div
+                key={index}
+                className={`flex justify-between items-center p-1 sm:p-2 rounded text-xs sm:text-sm ${index === 0 ? 'bg-yellow-100' : index === 1 ? 'bg-gray-100' : 'bg-yellow-50'}`}
+              >
+                <div className="flex items-center">
+                  <span className="font-bold mr-1 sm:mr-2">#{index + 1}</span>
+                  <span className="truncate max-w-[80px]">{player.name}</span>
+                </div>
+                <span className="font-bold">{player.score}</span>
+              </div>
+            ))}
+            {fullRanking.length > 3 && (
+              <button
+                onClick={() => setShowFullRanking(true)}
+                className="w-full mt-1 sm:mt-2 py-1 text-xs sm:text-sm text-gray-600 hover:text-gray-800 transition-colors text-center rounded border border-gray-200 hover:bg-gray-50"
+              >
+                Ver mais...
+              </button>
+            )}
+          </div>
+        ) : (
+          <p className="text-xs sm:text-sm text-center">No rankings available</p>
+        )}
+      </div>
+
+      {/* Full Ranking Modal */}
+      <Dialog open={showFullRanking} onOpenChange={setShowFullRanking}>
+        <DialogContent className="w-[90%] sm:w-full max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-base sm:text-lg">Full Ranking</DialogTitle>
+            <DialogDescription className="text-xs sm:text-sm">
+              Top players from 4th to 12th place
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1 sm:space-y-2 max-h-[300px] sm:max-h-[400px] overflow-y-auto">
+            {fullRanking.slice(3).map((player, index) => (
+              <div
+                key={player.id || index}
+                className="flex justify-between items-center p-1 sm:p-2 bg-gray-100 rounded text-xs sm:text-sm"
+              >
+                <span>#{index + 4} {player.name}</span>
+                <span>{player.score}</span>
+              </div>
+            ))}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
